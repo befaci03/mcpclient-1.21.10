@@ -68,7 +68,7 @@ public class PasswordCommand implements Command {
         if (client.getNetworkHandler() == null) return builder.buildFuture();
 
         client.getNetworkHandler().getPlayerList().stream()
-            .map(entry -> entry.getProfile().getName())
+            .map(entry -> entry.getProfile().name())
             .filter(Objects::nonNull)
             .filter(name -> name.toLowerCase().startsWith(currentInput))
             .forEach(builder::suggest);

@@ -1,14 +1,18 @@
 package dev.wrrulosdev.mcpclient.client.utils.network;
 
 import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.multiplayer.ConnectScreen;
 import net.minecraft.client.network.CookieStorage;
+import net.minecraft.client.network.PlayerListEntry;
 import net.minecraft.client.network.ServerAddress;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.network.ServerInfo.ServerType;
 import net.minecraft.client.option.ServerList;
+import net.minecraft.util.Identifier;
 
 public class OnlineServers {
 
@@ -27,7 +31,9 @@ public class OnlineServers {
             try {
                 ServerAddress serverAddress = ServerAddress.parse(address);
                 ServerInfo serverInfo = new ServerInfo("API Server", address, ServerType.OTHER);
-                CookieStorage cookieStorage = new CookieStorage(Collections.emptyMap());
+                Map<Identifier, byte[]> DAMNemptyCookies = Collections.emptyMap();
+                Map<UUID, PlayerListEntry> DAMNemptySeePlrs = Collections.emptyMap();
+                CookieStorage cookieStorage = new CookieStorage(DAMNemptyCookies, DAMNemptySeePlrs, true);
                 ConnectScreen.connect(
                     client.currentScreen,
                     client, 
@@ -36,7 +42,6 @@ public class OnlineServers {
                     false,
                     cookieStorage
                 );
-                
             } catch (Exception e) {
                 e.printStackTrace();
             }

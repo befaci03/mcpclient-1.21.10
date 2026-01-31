@@ -1,12 +1,12 @@
 package dev.wrrulosdev.mcpclient.client.screens;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import dev.wrrulosdev.mcpclient.client.Mcpclient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -89,7 +89,7 @@ public class CustomButton extends ClickableWidget {
         int imageY = getY() + (height - style.imageHeight) / 2;
 
         context.drawTexture(
-            RenderLayer::getGuiTextured,
+            RenderPipeline.builder().build(),
             style.texture,
             imageX,
             imageY,
@@ -128,7 +128,6 @@ public class CustomButton extends ClickableWidget {
     /**
      * Called when the button is clicked.
      */
-    @Override
     public void onClick(double mouseX, double mouseY) {
         if (this.pressAction != null) {
             this.pressAction.onPress(this);
@@ -157,7 +156,7 @@ public class CustomButton extends ClickableWidget {
         private int y;
         private int width = 200;
         private int height = 20;
-        private ButtonStyle style = new ButtonStyle();
+        private final ButtonStyle style = new ButtonStyle();
         private PressAction pressAction;
         private Tooltip tooltip;
 
@@ -254,11 +253,10 @@ public class CustomButton extends ClickableWidget {
             return this;
         }
 
-        public ButtonStyle textColors(int normal, int hover, int disabled) {
+        public void textColors(int normal, int hover, int disabled) {
             this.normalTextColor = normal;
             this.hoverTextColor = hover;
             this.disabledTextColor = disabled;
-            return this;
         }
 
         public ButtonStyle borderColors(int normal, int disabled) {

@@ -31,7 +31,7 @@ public class PlayerTracker {
         Set<String> currentPlayers = ConcurrentHashMap.newKeySet();
 
         Mcpclient.getMinecraftClient().player.networkHandler.getPlayerList().forEach(player -> {
-            String playerName = player.getProfile().getName();
+            String playerName = player.getProfile().name();
             if (!MinecraftValidator.isValidMinecraftUsername(playerName)) return;
             currentPlayers.add(playerName);
         });

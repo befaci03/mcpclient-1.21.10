@@ -39,7 +39,7 @@ public record AuthMeVelocityPayloadPacket() implements CustomPayload {
         buf.writeByte(0);
         buf.writeString("LOGIN");
         buf.writeByte(0);
-        buf.writeString(MinecraftClient.getInstance().getGameProfile().getName());
+        buf.writeString(MinecraftClient.getInstance().getGameProfile().name());
     }
 
     /**

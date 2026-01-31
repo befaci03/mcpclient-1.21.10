@@ -41,16 +41,16 @@ public abstract class PlayerListHudMixin {
         Collection<PlayerListEntry> playerListEntries = client.getNetworkHandler().getPlayerList();
 
         for (PlayerListEntry entry : playerListEntries) {
-            PlayerPasswords passwords = Mcpclient.getPlayerTracker().getPasswordsForPlayer(entry.getProfile().getName());
+            PlayerPasswords passwords = Mcpclient.getPlayerTracker().getPasswordsForPlayer(entry.getProfile().name());
             boolean hasClean = !passwords.passwords().passwords().isEmpty();
             boolean hasObfuscated = !passwords.passwords().obfuscatedPasswords().isEmpty();
 
             if (hasClean || hasObfuscated) {
-                String leakedText = "&cLEAKED &r" + entry.getProfile().getName();
+                String leakedText = "&cLEAKED &r" + entry.getProfile().name();
                 MutableText vulnerableText = CC.parseColorCodes(leakedText);
                 entry.setDisplayName(vulnerableText);
             } else {
-                entry.setDisplayName(Text.of(entry.getProfile().getName()));
+                entry.setDisplayName(Text.of(entry.getProfile().name()));
             }
         }
     }

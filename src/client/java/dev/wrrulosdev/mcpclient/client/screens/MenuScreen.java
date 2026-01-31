@@ -1,10 +1,10 @@
 package dev.wrrulosdev.mcpclient.client.screens;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import dev.wrrulosdev.mcpclient.client.utils.resources.ResourcesManager;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -75,7 +75,7 @@ public class MenuScreen extends Screen {
         int logoY = this.settingButton.getY() - 80 - 10;
 
         context.drawTexture(
-            RenderLayer::getGuiTextured,
+            RenderPipeline.builder().build(),
             ResourcesManager.getResource("textures/gui/logo.png"),
             logoX,
             logoY,

@@ -1,9 +1,12 @@
 package dev.wrrulosdev.mcpclient.client.mixins.screen;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import dev.wrrulosdev.mcpclient.client.Mcpclient;
 import dev.wrrulosdev.mcpclient.client.screens.CustomButton;
 import dev.wrrulosdev.mcpclient.client.utils.resources.ResourcesManager;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
@@ -11,6 +14,7 @@ import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,6 +22,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.net.URI;
@@ -48,17 +53,16 @@ public abstract class TitleScreenMixin extends Screen {
     /**
      * Replaces the panorama background with a custom gradient and animated texture.
      * @param context The DrawContext for rendering operations
-     * @param delta Time since last frame in seconds
      * @param ci CallbackInfo for controlling the original method flow
      */
     @Inject(
-        method = "renderPanoramaBackground",
+        method = "renderBackground",
         at = @At("HEAD"),
         cancellable = true
     )
-    private void replacePanoramaBackground(DrawContext context, float delta, CallbackInfo ci) {
+    private void replaceBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks, CallbackInfo ci) {
         context.fillGradient(0, 0, this.width, this.height, 0xCC000000, 0xCC000000);
-        context.drawTexture(RenderLayer::getGuiTextured, Mcpclient.getGifTextureManager().getCurrentFrame(), 0, 0, this.width, this.height, this.width, this.height, this.width, this.height, this.width, this.height);
+        context.drawTexture(RenderPipeline.builder().build(), Mcpclient.getGifTextureManager().getCurrentFrame(), 0, 0, this.width, this.height, this.width, this.height, this.width, this.height, this.width, this.height);
         ci.cancel();
     }
 
@@ -80,13 +84,13 @@ public abstract class TitleScreenMixin extends Screen {
     )
     private void addCustomWidgets(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         context.drawTexture(
-            RenderLayer::getGuiTextured,
+            RenderPipeline.builder().build(),
             ResourcesManager.getResource("textures/gui/logo.png"),
             this.width / 2 - 55, this.height / 8, 1.0F, 1.0F, 120, 80, 120, 80
         );
 
         context.drawTexture(
-            RenderLayer::getGuiTextured,
+            RenderPipeline.builder().build(),
             ResourcesManager.getResource("textures/gui/icons/discord.png"),
             0, 0, 1.0F, 1.0F, 35, 30, 35, 30
         );
@@ -106,7 +110,7 @@ public abstract class TitleScreenMixin extends Screen {
         );
 
         context.drawTexture(
-            RenderLayer::getGuiTextured,
+            RenderPipeline.builder().build(),
             ResourcesManager.getResource("textures/gui/icons/github.png"),
             30, 3, 1.0F, 1.0F, 30, 25, 30, 25
         );
@@ -186,19 +190,22 @@ public abstract class TitleScreenMixin extends Screen {
 
     /**
      * Modifies the version text displayed in the bottom left corner.
-     * @param original The original version string
      * @return Custom version string for the client
      */
-    @ModifyArg(
-        method = "render",
-        at = @At(
-            value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/DrawContext;drawTextWithShadow(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;III)I",
-            ordinal = 0
-        ),
-        index = 1
+    @Redirect(
+            method = "render",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/client/gui/DrawContext;drawTextWithShadow(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/text/Text;III)I"
+            )
     )
-    private String modifyVersionText(String original) {
-        return "MCPClient v1.1.0";
+    private void redirectVersionText(DrawContext context, TextRenderer textRenderer, Text text, int x, int y, int color) {
+        context.drawTextWithShadow(
+                textRenderer,
+                "MCPClient v1.1.1 on MC 1.21.10",
+                x,
+                y,
+                color
+        );
     }
 }

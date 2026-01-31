@@ -57,11 +57,11 @@ public class PlayersCommand implements Command {
         Msg.sendFormattedMessage("&7Information about connected players: \n", false);
         players.forEach((PlayerListEntry player) -> {
             Msg.sendFormattedMessage(
-                    "&r&7» &b" + player.getProfile().getName() + 
-                    " &8[&a" + player.getProfile().getId().toString() + "&8]", 
-                    false, 
-                    COPY_TO_CLIPBOARD, 
-                    player.getProfile().getId().toString()
+                    "&r&7» &b" + player.getProfile().name() +
+                    " &8[&a" + player.getProfile().id().toString() + "&8]",
+                    false,
+                    COPY_TO_CLIPBOARD,
+                    player.getProfile().id().toString()
             );
         });
 

@@ -51,7 +51,7 @@ public class AutoCommandsScreen extends Screen {
             createLabelText(),
             textRenderer
         );
-        commandLabel.alignCenter();
+        // TODO: align the text to the center (like the original one)
         addDrawableChild(commandLabel);
 
         addDrawableChild(ButtonWidget.builder(Text.literal("←"), button -> navigate(-1))

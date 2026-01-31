@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class KeybindingManager {
@@ -34,7 +35,7 @@ public class KeybindingManager {
         this.openSettingsKey = createKeyBinding(
             "Open Settings",
             GLFW.GLFW_KEY_RIGHT_SHIFT,
-            "MCPClient | Settings"
+            KeyBinding.Category.create(Identifier.of("MCPClient | Settings"))
         );
 
         this.autoCommandKeys = new KeyBinding[6];
@@ -47,7 +48,7 @@ public class KeybindingManager {
             autoCommandKeys[i] = createKeyBinding(
                 "AutoCommand " + (i + 1),
                 DEFAULT_AUTOCOMMAND_KEYS[i],
-                "MCPClient | AutoCommands"
+                KeyBinding.Category.create(Identifier.of("MCPClient | AutoCommands"))
             );
         }
     }
@@ -60,7 +61,7 @@ public class KeybindingManager {
      * @param category Control settings category
      * @return Configured KeyBinding instance
      */
-    private KeyBinding createKeyBinding(String translationKey, int keyCode, String category) {
+    private KeyBinding createKeyBinding(String translationKey, int keyCode, KeyBinding.Category category) {
         KeyBinding binding = new KeyBinding(
             translationKey,
             InputUtil.Type.KEYSYM,
@@ -126,7 +127,7 @@ public class KeybindingManager {
         if (client.player == null) return;
 
         if (command.startsWith("/")) {
-            client.player.networkHandler.sendCommand(command);
+            client.player.networkHandler.sendChatCommand(command);
             return;
         }
 

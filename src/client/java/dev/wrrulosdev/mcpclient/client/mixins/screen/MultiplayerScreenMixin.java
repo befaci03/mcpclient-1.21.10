@@ -1,5 +1,6 @@
 package dev.wrrulosdev.mcpclient.client.mixins.screen;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import dev.wrrulosdev.mcpclient.client.Mcpclient;
 import dev.wrrulosdev.mcpclient.client.screens.CustomButton;
 import dev.wrrulosdev.mcpclient.client.screens.SpoofSectionScreen;
@@ -29,7 +30,7 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(MultiplayerScreen.class)
 public abstract class MultiplayerScreenMixin extends Screen {
 
-    @Shadow private boolean initialized;
+    private boolean initialized;
     @Shadow protected MultiplayerServerListWidget serverListWidget;
     @Shadow private ServerList serverList;
     @Shadow private LanServerQueryManager.LanServerEntryList lanServers;
@@ -40,7 +41,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
     @Shadow private ButtonWidget buttonDelete;
 
     @Shadow protected abstract void directConnect(boolean confirmedAction);
-    @Shadow public abstract void connect();
+    public abstract void connect();
     @Shadow protected abstract void addEntry(boolean confirmedAction);
     @Shadow protected abstract void editEntry(boolean confirmedAction);
     @Shadow protected abstract void removeEntry(boolean confirmedAction);
@@ -104,7 +105,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
         ButtonWidget buttonWidget2 = (ButtonWidget) this.addDrawableChild(
             ButtonWidget.builder(Text.translatable("selectServer.add"), (button) -> {
                 this.selectedEntry = new ServerInfo(I18n.translate("selectServer.defaultName"), "", ServerInfo.ServerType.OTHER);
-                this.client.setScreen(new AddServerScreen(this, this::addEntry, this.selectedEntry));
+                this.client.setScreen(new AddServerScreen(this, Text.translatable("selectServer.add"), this::addEntry, this.selectedEntry));
             }).width(0).build()
         );
 
@@ -115,7 +116,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
                     ServerInfo serverInfo = ((MultiplayerServerListWidget.ServerEntry) entry).getServer();
                     this.selectedEntry = new ServerInfo(serverInfo.name, serverInfo.address, ServerInfo.ServerType.OTHER);
                     this.selectedEntry.copyWithSettingsFrom(serverInfo);
-                    this.client.setScreen(new AddServerScreen(this, this::editEntry, this.selectedEntry));
+                    this.client.setScreen(new AddServerScreen(this, Text.translatable("selectServer.edit"), this::editEntry, this.selectedEntry));
                 }
             }).width(0).build()
         );
@@ -168,7 +169,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
                 ? "textures/gui/icons/delete_hover.png"
                 : "textures/gui/icons/delete.png");
 
-        context.drawTexture(RenderLayer::getGuiTextured, ResourcesManager.getResource(deleteTexture), deleteX, deleteY, 1.0F, 1.0F, 35, 30, textureWidth, textureHeight);
+        context.drawTexture(RenderPipeline.builder().build(), ResourcesManager.getResource(deleteTexture), deleteX, deleteY, 1.0F, 1.0F, 35, 30, textureWidth, textureHeight);
         this.addDrawableChild(CustomButton.builder(Text.empty())
             .position(deleteX, deleteY)
             .dimensions(textureWidth - 2, textureHeight - 2)
@@ -197,7 +198,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
             ? "textures/gui/icons/edit_before.png"
             : (isEditHovered ? "textures/gui/icons/edit_hover.png" : "textures/gui/icons/edit.png");
 
-        context.drawTexture(RenderLayer::getGuiTextured, ResourcesManager.getResource(editTexture), editX, editY, 1.0F, 1.0F, 33, 29, textureWidth, textureHeight);
+        context.drawTexture(RenderPipeline.builder().build(), ResourcesManager.getResource(editTexture), editX, editY, 1.0F, 1.0F, 33, 29, textureWidth, textureHeight);
         this.addDrawableChild(CustomButton.builder(Text.empty())
             .position(editX, editY)
             .dimensions(textureWidth - 2, textureHeight - 2)
@@ -208,7 +209,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
                     ServerInfo serverInfo = ((MultiplayerServerListWidget.ServerEntry) entry).getServer();
                     this.selectedEntry = new ServerInfo(serverInfo.name, serverInfo.address, ServerInfo.ServerType.OTHER);
                     this.selectedEntry.copyWithSettingsFrom(serverInfo);
-                    this.client.setScreen(new AddServerScreen(this, this::editEntry, this.selectedEntry));
+                    this.client.setScreen(new AddServerScreen(this, Text.translatable("selectServer.edit"), this::editEntry, this.selectedEntry));
                 }
             })
             .tooltip(Tooltip.of(Text.literal("Click to edit")))
@@ -220,7 +221,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
         int syncY = screenHeight - 50;
         boolean isSyncHovered = mouseX >= syncX && mouseX <= syncX + (textureWidth - 2.5) && mouseY >= syncY && mouseY <= syncY + (textureHeight - 2.5);
         String syncTexture = isSyncHovered ? "textures/gui/icons/sync_hover.png" : "textures/gui/icons/sync.png";
-        context.drawTexture(RenderLayer::getGuiTextured, ResourcesManager.getResource(syncTexture), syncX, syncY, 1.0F, 1.0F, 33, 29, textureWidth, textureHeight);
+        context.drawTexture(RenderPipeline.builder().build(), ResourcesManager.getResource(syncTexture), syncX, syncY, 1.0F, 1.0F, 33, 29, textureWidth, textureHeight);
         this.addDrawableChild(CustomButton.builder(Text.empty())
             .position(syncX, syncY)
             .dimensions(textureWidth - 2, textureHeight - 2)
@@ -235,7 +236,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
         int joinY = screenHeight - 50;
         boolean isJoinHovered = mouseX >= joinX && mouseX <= joinX + (textureWidth - 2.5) && mouseY >= joinY && mouseY <= joinY + (textureHeight - 2.5);
         String joinTexture = isJoinHovered ? "textures/gui/icons/join_hover.png" : "textures/gui/icons/join.png";
-        context.drawTexture(RenderLayer::getGuiTextured, ResourcesManager.getResource(joinTexture), joinX, joinY, 1.0F, 1.0F, 33, 29, textureWidth, textureHeight);
+        context.drawTexture(RenderPipeline.builder().build(), ResourcesManager.getResource(joinTexture), joinX, joinY, 1.0F, 1.0F, 33, 29, textureWidth, textureHeight);
         this.addDrawableChild(CustomButton.builder(Text.empty())
             .position(joinX, joinY)
             .dimensions(textureWidth - 2, textureHeight - 2)
@@ -253,14 +254,14 @@ public abstract class MultiplayerScreenMixin extends Screen {
         int addY = screenHeight - 50;
         boolean isAddHovered = mouseX >= addX && mouseX <= addX + (textureWidth - 2.5) && mouseY >= addY && mouseY <= addY + (textureHeight - 2.5);
         String addTexture = isAddHovered ? "textures/gui/icons/add_hover.png" : "textures/gui/icons/add.png";
-        context.drawTexture(RenderLayer::getGuiTextured, ResourcesManager.getResource(addTexture), addX, addY, 1.0F, 1.0F, 33, 29, textureWidth, textureHeight);
+        context.drawTexture(RenderPipeline.builder().build(), ResourcesManager.getResource(addTexture), addX, addY, 1.0F, 1.0F, 33, 29, textureWidth, textureHeight);
         this.addDrawableChild(CustomButton.builder(Text.empty())
             .position(addX, addY)
             .dimensions(textureWidth - 2, textureHeight - 2)
             .style(style -> style.transparent(true).border(false))
             .onPress(button -> {
                 this.selectedEntry = new ServerInfo(I18n.translate("selectServer.defaultName"), "", ServerInfo.ServerType.OTHER);
-                this.client.setScreen(new AddServerScreen(this, this::addEntry, this.selectedEntry));
+                this.client.setScreen(new AddServerScreen(this, Text.translatable("selectServer.add"), this::addEntry, this.selectedEntry));
             })
             .tooltip(Tooltip.of(Text.literal("Add server")))
             .build()
@@ -271,7 +272,7 @@ public abstract class MultiplayerScreenMixin extends Screen {
         int settingsY = screenHeight - 50;
         boolean isSettingsHovered = mouseX >= settingsX && mouseX <= settingsX + (textureWidth - 2.5) && mouseY >= settingsY && mouseY <= settingsY + (textureHeight - 2.5);
         String settingsTexture = isSettingsHovered ? "textures/gui/icons/setting_hover.png" : "textures/gui/icons/setting.png";
-        context.drawTexture(RenderLayer::getGuiTextured, ResourcesManager.getResource(settingsTexture), settingsX, settingsY, 1.0F, 1.0F, 33, 29, textureWidth, textureHeight);
+        context.drawTexture(RenderPipeline.builder().build(), ResourcesManager.getResource(settingsTexture), settingsX, settingsY, 1.0F, 1.0F, 33, 29, textureWidth, textureHeight);
         this.addDrawableChild(CustomButton.builder(Text.empty())
             .position(settingsX, settingsY)
             .dimensions(textureWidth - 2, textureHeight - 2)

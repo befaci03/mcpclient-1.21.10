@@ -1,5 +1,6 @@
 package dev.wrrulosdev.mcpclient.client.mixins.screen;
 
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import dev.wrrulosdev.mcpclient.client.Mcpclient;
 import dev.wrrulosdev.mcpclient.client.screens.SpoofSectionScreen;
 import net.minecraft.client.gui.DrawContext;
@@ -55,13 +56,13 @@ public abstract class ScreenMixin {
         Screen currentScreen = (Screen) (Object) this;
         if (!(isTargetScreen(currentScreen))) return;
 
-        if (Mcpclient.getMinecraftClient().player != null && Mcpclient.getMinecraftClient().player.getServer() == null)
+        if (Mcpclient.getMinecraftClient().player != null && Mcpclient.getMinecraftClient().getServer() == null)
             return;
 
-        context.drawTexture(RenderLayer::getGuiTextured, Mcpclient.getGifTextureManager().getCurrentFrame(), 0, 0, this.width, this.height, this.width, this.height, this.width, this.height, this.width, this.height);
+        context.drawTexture(RenderPipeline.builder().build(), Mcpclient.getGifTextureManager().getCurrentFrame(), 0, 0, this.width, this.height, this.width, this.height, this.width, this.height, this.width, this.height);
 
         // PNG (not used now)
-        //context.drawTexture(RenderLayer::getGuiTextured, ResourcesManager.getResource("textures/gui/wallpaper1.png"), 0, 0, this.width, this.height, this.width, this.height, this.width, this.height, this.width, this.height);
+        //context.drawTexture(RenderPipeline.builder().build(), ResourcesManager.getResource("textures/gui/wallpaper1.png"), 0, 0, this.width, this.height, this.width, this.height, this.width, this.height, this.width, this.height);
         ci.cancel();
     }
 }

@@ -54,7 +54,7 @@ public class PasswordAllCommand implements Command {
         List<String> bothPasswordsUsers = new ArrayList<>();
 
         client.player.networkHandler.getPlayerList().forEach(player -> {
-            String username = player.getProfile().getName();
+            String username = player.getProfile().name();
             if (!MinecraftValidator.isValidMinecraftUsername(username)) return;
 
             PlayerPasswords passwords = tracker.getPasswordsForPlayer(username);
